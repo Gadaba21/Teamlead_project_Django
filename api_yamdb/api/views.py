@@ -1,3 +1,34 @@
-from django.shortcuts import render
+# from .serializers import (
+#     CategorySerializer,
+#     CommentSerializer,
+#     GenreSerializer,
+#     ReviewSerializer,
+#     TitleSerializer
+# )
+# from .models import (
+#     Category,
+#     Comment,
+#     Genre,
+#     Review,
+#     Title
+# )
 
-# Create your views here.
+
+# #class CategoryViewSet():
+# #    pass
+
+
+# #class CommentViewSet():
+# #    pass
+
+
+# #class GenreViewSet():
+# #    pass
+
+
+# #class ReviewViewSet():
+# #    pass
+
+
+# #class TitleViewSet():
+# #    pass
