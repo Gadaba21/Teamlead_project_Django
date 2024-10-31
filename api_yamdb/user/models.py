@@ -44,7 +44,10 @@ class User(AbstractUser):
         blank=True,
         unique=True,
         verbose_name='Электронная почта',
-        help_text='Введите свой email'
+        help_text='Введите свой email',
+        error_messages={
+            'unique': 'Пользователь с таким email уже существует!',
+        },
     )
     bio = models.TextField(
         blank=True,
