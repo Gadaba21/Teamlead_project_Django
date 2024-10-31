@@ -3,7 +3,9 @@ from django.contrib.auth import get_user_model
 from api.constanst import (LENGTH_TEXT, MIN_VALUE,
                            MAX_VALUE, MAX_LENGTH, MAX_SLAG)
 
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import (MinValueValidator,
+                                    MaxValueValidator,
+                                    RegexValidator)
 from .validators import validate_year
 
 User = get_user_model()
@@ -17,8 +19,17 @@ class Category(models.Model):
     slug = models.SlugField(
         verbose_name='Слаг категории',
         max_length=MAX_SLAG,
-        unique=True
+        unique=True,
+        validators=[RegexValidator(
+            regex=r'^[-a-zA-Z0-9_]+$',
+            message='Слаг содержит недопустимый символ'
+        )]
     )
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -33,8 +44,17 @@ class Genre(models.Model):
     slug = models.SlugField(
         verbose_name='Слаг жанра',
         max_length=MAX_SLAG,
-        unique=True
+        unique=True,
+        validators=[RegexValidator(
+            regex=r'^[-a-zA-Z0-9_]+$',
+            message='Слаг содержит недопустимый символ'
+        )]
     )
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -63,6 +83,11 @@ class Title(models.Model):
         validators=(validate_year, ),
         verbose_name='Год'
     )
+
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
