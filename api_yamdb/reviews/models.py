@@ -1,14 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-from api.constanst import (LENGTH_TEXT, MIN_VALUE,
-                           MAX_VALUE, MAX_LENGTH, MAX_SLAG)
-
-from django.core.validators import (MinValueValidator,
-                                    MaxValueValidator,
-                                    RegexValidator)
+from user.models import User
+from api.constanst import (LENGTH_TEXT, MAX_LENGTH, MAX_SLAG)
 from .validators import validate_year, validate_slag, validate_score
-
-User = get_user_model()
 
 
 class Category(models.Model):
@@ -21,10 +14,7 @@ class Category(models.Model):
         verbose_name='Слаг категории',
         max_length=MAX_SLAG,
         unique=True,
-        validators=[RegexValidator(
-            regex=r'^[-a-zA-Z0-9_]+$',
-            message='Слаг содержит недопустимый символ'
-        )]
+        validators=(validate_slag,)
     )
 
     class Meta:
