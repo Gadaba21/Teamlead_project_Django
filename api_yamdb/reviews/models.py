@@ -46,7 +46,7 @@ class Genre(models.Model):
         verbose_name='Слаг жанра',
         max_length=MAX_SLAG,
         unique=True,
-        validators=(validate_slag(),)
+        validators=(validate_slag,)
     )
 
     class Meta:
@@ -102,7 +102,7 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         verbose_name='Оценка',
-        validators=(validate_score(),)
+        validators=(validate_score,)
     )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
