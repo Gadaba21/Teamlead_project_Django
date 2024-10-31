@@ -4,15 +4,49 @@ from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    pass
+    """Сериализатор категорий."""
+
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    pass
+    """Сериализатор жанров."""
+
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
 
 
-class TitleSerializer(serializers.ModelSerializer):
-    pass
+class TitleSerializerGet(serializers.ModelSerializer):
+    """Сериализатор произведений, для чтения."""
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    rating = serializers.IntegerField(required=False, default=None)
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year', 'rating',
+                  'description', 'genre', 'category')
+
+
+class TitleSerializerPost(serializers.ModelSerializer):
+    """Сериализатор произведений, для изменений."""
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+
+    class Meta:
+        model = Title
+        fields = ('id', 'name', 'year',
+                  'description', 'genre', 'category')
 
 
 class ReviewSerializer(serializers.ModelSerializer):
