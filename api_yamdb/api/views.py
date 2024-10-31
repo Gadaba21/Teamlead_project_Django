@@ -5,12 +5,13 @@ from .serializers import (
     ReviewSerializer,
     TitleSerializer
 )
-from .models import (
-    Category,
-    Comment,
-    Genre,
-    Review,
-    Title
+
+from reviews.models import (
+   Category,
+   Comment,
+   Genre,
+   Review,
+   Title
 )
 
 
