@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD
+from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD, LENGTH_TEXT
 from user.validators import valid_username
 
 
@@ -66,4 +66,4 @@ class User(AbstractUser):
         ordering = ('id',)
 
     def __str__(self):
-        return self.username
+        return self.username[:LENGTH_TEXT]
