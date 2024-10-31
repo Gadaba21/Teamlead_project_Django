@@ -6,9 +6,10 @@ from api.constanst import (LENGTH_TEXT, MIN_VALUE,
 from django.core.validators import (MinValueValidator,
                                     MaxValueValidator,
                                     RegexValidator)
-from .validators import validate_year
+from .validators import validate_year, validate_slag, validate_score
 
 User = get_user_model()
+
 
 class Category(models.Model):
     '''Класс категорий.'''
@@ -45,10 +46,7 @@ class Genre(models.Model):
         verbose_name='Слаг жанра',
         max_length=MAX_SLAG,
         unique=True,
-        validators=[RegexValidator(
-            regex=r'^[-a-zA-Z0-9_]+$',
-            message='Слаг содержит недопустимый символ'
-        )]
+        validators=(validate_slag(),)
     )
 
     class Meta:
@@ -104,10 +102,7 @@ class Review(models.Model):
     )
     score = models.PositiveIntegerField(
         verbose_name='Оценка',
-        validators=[
-            MinValueValidator(MIN_VALUE),
-            MaxValueValidator(MAX_VALUE)
-        ]
+        validators=(validate_score(),)
     )
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
