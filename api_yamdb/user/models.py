@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD, LENGTH_TEXT
+from api.constanst import (MAX_EMAIL_FIELD, MAX_NAME_FIELD,
+                           LENGTH_TEXT, MAX_VALUE)
 from user.validators import UsernameValidator
 
 
@@ -61,6 +62,12 @@ class User(AbstractUser):
         default=USER,
         verbose_name='Роль пользователя',
         help_text='Уровень доступа пользователя'
+    )
+    confirmation_code = models.CharField(
+        max_length=MAX_VALUE,
+        null=True,
+        blank=True,
+        verbose_name="Код потдверждения",
     )
 
     class Meta:
