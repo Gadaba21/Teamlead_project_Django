@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD, LENGTH_TEXT
-from user.validators import valid_username
+from user.validators import UsernameValidator
 
 
 class User(AbstractUser):
@@ -24,7 +24,7 @@ class User(AbstractUser):
         max_length=MAX_NAME_FIELD,
         verbose_name='Имя пользователя',
         unique=True,
-        validators=(valid_username,),
+        validators=[UsernameValidator()],
         error_messages={
             'unique': 'Пользователь с таким именем уже существует!',
         },
@@ -56,7 +56,7 @@ class User(AbstractUser):
         help_text='Заполните информацию о себе'
     )
     role = models.CharField(
-        max_length=max(len(role) for role, _ in ROLES),
+        max_length=LENGTH_TEXT,
         choices=ROLES,
         default=USER,
         verbose_name='Роль пользователя',
