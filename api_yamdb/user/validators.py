@@ -1,13 +1,18 @@
-import re
-
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 
 
-def valid_username(name):
-    forbidden_name = re.sub(r'[\w.@+-]', '', 'me')
-    if name in forbidden_name:
-        raise ValidationError(
-            f'Имя пользователя не может быть "me", '
-            f'содержать символы: {forbidden_name} или быть пустым!'
-        )
-    return name
+class UsernameValidator(RegexValidator):
+    regex = r'^[\w.@+-]+\Z'
+    message = _(
+        'Введите корректное имя пользователя. '
+        'Допустимы только латинские буквы, цифры и символы @/./+/-/_'
+    )
+    flags = 0
+
+    def __call__(self, value):
+        super().__call__(value)
+
+        if value == "me":
+            raise ValidationError('Имя пользователя "me" использовать нельзя!')
