@@ -2,6 +2,7 @@ from django.contrib.auth.tokens import default_token_generator as dtg
 from rest_framework.serializers import (
     CharField, EmailField, ModelSerializer, Serializer, ValidationError)
 
+from api.constanst import MAX_LENGTH, MAX_NAME_FIELD
 from user.models import User
 from user.validators import UsernameValidator
 
@@ -33,8 +34,8 @@ class UserCreationSerializer(Serializer):
 
 
 class TokenSerializer(Serializer):
-    username = CharField(required=True)
-    confirmation_code = CharField(required=True)
+    username = CharField(max_length=MAX_NAME_FIELD, required=True)
+    confirmation_code = CharField(max_length=MAX_LENGTH, required=True)
 
     def validate(self, data):
         try:
