@@ -23,7 +23,7 @@ class TitleSerializerGet(serializers.ModelSerializer):
     """Сериализатор произведений, для чтения."""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategorySerializer(read_only=True)
-    rating = serializers.IntegerField(required=False, default=None)
+    rating = serializers.IntegerField(required=False, default=0)
 
     class Meta:
         model = Title
@@ -31,7 +31,7 @@ class TitleSerializerGet(serializers.ModelSerializer):
                   'description', 'genre', 'category')
 
 
-class TitleSerializerPost(serializers.ModelSerializer):
+class TitleSerializer(serializers.ModelSerializer):
     """Сериализатор произведений, для изменений."""
     genre = serializers.SlugRelatedField(
         slug_field='slug',

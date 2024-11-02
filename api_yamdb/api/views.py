@@ -11,7 +11,7 @@ from .serializers import (
     GenreSerializer,
     ReviewSerializer,
     TitleSerializerGet,
-    TitleSerializerPost
+    TitleSerializer
 )
 from reviews.models import (
     Category,
@@ -42,7 +42,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return TitleSerializerGet
-        return TitleSerializerPost
+        return TitleSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
