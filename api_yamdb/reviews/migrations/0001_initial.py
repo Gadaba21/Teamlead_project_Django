@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=256, verbose_name='Категория')),
-                ('slug', models.SlugField(unique=True, validators=[reviews.validators.validate_slag], verbose_name='Слаг категории')),
+                ('slug', models.SlugField(unique=True, validators=[reviews.validators.validate_slug], verbose_name='Слаг категории')),
             ],
             options={
                 'verbose_name': 'Категория',
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=256, verbose_name='Жанр')),
-                ('slug', models.SlugField(unique=True, validators=[reviews.validators.validate_slag], verbose_name='Слаг жанра')),
+                ('slug', models.SlugField(unique=True, validators=[reviews.validators.validate_slug], verbose_name='Слаг жанра')),
             ],
             options={
                 'verbose_name': 'Жанр',

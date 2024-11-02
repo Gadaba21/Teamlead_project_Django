@@ -1,7 +1,7 @@
 from django.db import models
 from user.models import User
 from api.constanst import (LENGTH_TEXT, MAX_LENGTH, MAX_SLAG)
-from .validators import validate_year, validate_slag, validate_score
+from .validators import validate_year, validate_slug, validate_score
 
 
 class Category(models.Model):
@@ -14,7 +14,7 @@ class Category(models.Model):
         verbose_name='Слаг категории',
         max_length=MAX_SLAG,
         unique=True,
-        validators=(validate_slag,)
+        validators=(validate_slug,)
     )
 
     class Meta:
@@ -36,7 +36,7 @@ class Genre(models.Model):
         verbose_name='Слаг жанра',
         max_length=MAX_SLAG,
         unique=True,
-        validators=(validate_slag,)
+        validators=(validate_slug,)
     )
 
     class Meta:
