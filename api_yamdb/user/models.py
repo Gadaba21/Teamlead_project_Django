@@ -3,7 +3,7 @@ from django.db import models
 
 from api.constanst import (MAX_EMAIL_FIELD, MAX_NAME_FIELD,
                            LENGTH_TEXT, MAX_VALUE)
-from user.validators import UsernameValidator
+from user.validators import validate_username
 
 
 class User(AbstractUser):
@@ -25,7 +25,7 @@ class User(AbstractUser):
         max_length=MAX_NAME_FIELD,
         verbose_name='Имя пользователя',
         unique=True,
-        validators=[UsernameValidator()],
+        validators=[validate_username,],
         error_messages={
             'unique': 'Пользователь с таким именем уже существует!',
         },

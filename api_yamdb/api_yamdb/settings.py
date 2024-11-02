@@ -103,8 +103,6 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'email',
-    'USER_ID_CLAIM': 'user_email',
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'

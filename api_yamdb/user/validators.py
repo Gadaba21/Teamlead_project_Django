@@ -2,17 +2,16 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
+from api.constanst import RESOLVED_NAME_MSG
 
-class UsernameValidator(RegexValidator):
-    regex = r'^[\w.@+-]+\Z'
-    message = _(
-        'Введите корректное имя пользователя. '
-        'Допустимы только латинские буквы, цифры и символы @/./+/-/_'
+
+def validate_username(value):
+    if value.lower() == 'me':
+        raise ValidationError('Имя пользователя \'me\' использовать нельзя!')
+
+    regex_validator = RegexValidator(
+        regex=r'^[\w.@+-]+\Z',
+        message=_(RESOLVED_NAME_MSG)
     )
-    flags = 0
-
-    def __call__(self, value):
-        super().__call__(value)
-
-        if value == "me":
-            raise ValidationError('Имя пользователя "me" использовать нельзя!')
+    regex_validator(value)
+    return value

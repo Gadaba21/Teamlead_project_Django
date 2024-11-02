@@ -1,84 +1,66 @@
-# from django.contrib.auth.tokens import default_token_generator as dtg
-from django.shortcuts import get_object_or_404
-from rest_framework.serializers import (
-    CharField, EmailField, ModelSerializer, ValidationError, HiddenField)
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
-from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
-# from api.constanst import MAX_LENGTH, MAX_NAME_FIELD
-from user.models import User
-from user.validators import UsernameValidator
+from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD
+from user.validators import validate_username
+from user.utils import generate_confirmation_code
+
+User = get_user_model()
 
 
-class UserSerializer(ModelSerializer):
+class SignUpSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        max_length=MAX_NAME_FIELD,
+        validators=(validate_username, UniqueValidator(
+            queryset=User.objects.all(),
+            message='Такой username уже существует.')
+        )
+    )
+    email = serializers.EmailField(
+        max_length=MAX_EMAIL_FIELD,
+        validators=(UniqueValidator(
+            queryset=User.objects.all(),
+            message='Такой e-mail уже зарегистрирован.'),
+        )
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        user.confirmation_code = generate_confirmation_code(user)
+        user.save()
+        return user
+
+
+class TokenSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    confirmation_code = serializers.CharField()
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        confirmation_code = attrs.get('confirmation_code')
+
+        user = User.objects.filter(username=username).first()
+        if not user or user.confirmation_code != confirmation_code:
+            raise serializers.ValidationError(
+                'Неверный код подтверждения или имя пользователя.'
+            )
+        return {'user': user}
+
+    def get_token(self, user):
+        token = AccessToken.for_user(user)
+        return token
+
+
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role',
         )
-
-
-class SignupSerializer(ModelSerializer):
-    email = EmailField(
-        validators=[UniqueValidator(queryset=User.objects.all())],
-        required=True
-    )
-    username = CharField(
-        validators=[UsernameValidator()],
-        required=True
-    )
-
-    class Meta:
-        model = User
-        fields = ("username", "email",)
-
-    def validate(self, attrs):
-        if User.objects.filter(username=attrs['username']).exists():
-            raise ValidationError('Пользователь с таким именем уже существует')
-        if User.objects.filter(email=attrs['email']).exists():
-            raise ValidationError('Пользователь с таким email уже существует')
-        return attrs
-
-    def validate_username(self, value):
-        if value == "me":
-            raise ValidationError('Имя пользователя "me" использовать нельзя!')
-        return value
-
-
-class TokenSerializer(TokenObtainSerializer):
-    token_class = AccessToken
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["confirmation_code"] = CharField(required=False)
-        self.fields["password"] = HiddenField(default="")
-
-    def get_token(self, user):
-        return self.token_class.for_user(user)
-
-    def validate(self, attrs):
-        self.user = get_object_or_404(User, username=attrs["username"])
-
-        if self.user.confirmation_code != attrs["confirmation_code"]:
-            raise ValidationError("Неверный код подтверждения")
-
-        data = str(self.get_token(self.user))
-        return {"token": data}
-
-    # username = CharField(max_length=MAX_NAME_FIELD, required=True)
-    # confirmation_code = CharField(max_length=MAX_LENGTH, required=True)
-
-    # def validate(self, data):
-    #     try:
-    #         user = User.objects.get(username=data['username'])
-    #     except User.DoesNotExist:
-    #         raise ValidationError(
-    #             {'username': 'Пользователь с таким именем не найден'}
-    #         )
-    #     if not dtg.check_token(user, data['confirmation_code']):
-    #         raise ValidationError(
-    #             {'confirmation_code': 'Неверный код подтверждения'}
-    #         )
-    #     return data
