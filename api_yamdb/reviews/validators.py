@@ -1,9 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.core.validators import (MinValueValidator,
-                                    MaxValueValidator,
-                                    RegexValidator)
 from api.constanst import MIN_YEAR, MIN_VALUE, MAX_VALUE
+import re
 
 
 def validate_year(year):
@@ -14,12 +12,12 @@ def validate_year(year):
         )
 
 
-def validate_slag():
-    return RegexValidator(
-        regex=r'^[-a-zA-Z0-9_]+$',
-        message='Слаг содержит недопустимый символ'
-    )
+def validate_slug(value):
+    slug_regex = r'^[-a-zA-Z0-9_]+$'
+    if not re.match(slug_regex, value):
+        raise ValidationError('Слаг содержит недопустимый символ.')
 
 
-def validate_score():
-    return (MinValueValidator(MIN_VALUE), MaxValueValidator(MAX_VALUE))
+def validate_score(value):
+    if not (MIN_VALUE <= value <= MAX_VALUE):
+        raise ValidationError(f'Оценка должна быть в диапазоне от {MIN_VALUE} до {MAX_VALUE}.')

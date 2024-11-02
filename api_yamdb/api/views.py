@@ -15,7 +15,6 @@ from .serializers import (
 )
 from reviews.models import (
     Category,
-    Comment,
     Genre,
     Review,
     Title
@@ -37,7 +36,7 @@ class GenreViewSet(CategoryGenreMixin):
 class TitleViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели произведений."""
     queryset = Title.objects.annotate(
-        rating=Avg('reviews__score')).order_by('name')
+        rating=Avg('review__score')).order_by('name')
     filterset_class = TitleFilters
 
     def get_serializer_class(self):
@@ -54,7 +53,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
 
     def get_queryset(self):
-        return self.get_title().reviews.all()
+        return self.get_title().review.all()
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user, title=self.get_title())
