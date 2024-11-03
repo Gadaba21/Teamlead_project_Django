@@ -1,28 +1,36 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.serializers import (CharField, EmailField,
+                                        ModelSerializer, Serializer)
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD
-from user.validators import validate_username
 from user.utils import generate_confirmation_code
+from user.validators import validate_username, UsernameValidator
 
 User = get_user_model()
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
+class SignUpSerializer(ModelSerializer):
+    username = CharField(
         max_length=MAX_NAME_FIELD,
-        validators=(validate_username, UniqueValidator(
-            queryset=User.objects.all(),
-            message='Такой username уже существует.')
+        validators=(
+            validate_username,
+            UsernameValidator(),
+            UniqueValidator(
+                User.objects.all(),
+                'Такой username уже существует.'
+            )
         )
     )
-    email = serializers.EmailField(
+    email = EmailField(
         max_length=MAX_EMAIL_FIELD,
-        validators=(UniqueValidator(
-            queryset=User.objects.all(),
-            message='Такой e-mail уже зарегистрирован.'),
+        validators=(
+            UniqueValidator(
+                User.objects.all(),
+                'Такой e-mail уже зарегистрирован.'
+            ),
         )
     )
 
@@ -37,19 +45,19 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
 
 
-class TokenSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    confirmation_code = serializers.CharField()
+class TokenSerializer(Serializer):
+    username = CharField()
+    confirmation_code = CharField()
 
     def validate(self, attrs):
         username = attrs.get('username')
         confirmation_code = attrs.get('confirmation_code')
-
         user = User.objects.filter(username=username).first()
-        if not user or user.confirmation_code != confirmation_code:
-            raise serializers.ValidationError(
-                'Неверный код подтверждения или имя пользователя.'
-            )
+        if not user:
+            raise NotFound('Пользователь с таким именем не найден.')
+        if user.confirmation_code != confirmation_code:
+            raise ValidationError('Неверный код подтверждения.',
+                                  code='invalid_code')
         return {'user': user}
 
     def get_token(self, user):
@@ -57,7 +65,7 @@ class TokenSerializer(serializers.Serializer):
         return token
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User

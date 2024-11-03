@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.constanst import (MAX_EMAIL_FIELD, MAX_NAME_FIELD,
-                           LENGTH_TEXT, MAX_VALUE)
-from user.validators import validate_username
+from api.constanst import (
+    MAX_EMAIL_FIELD, MAX_NAME_FIELD, LENGTH_TEXT, MAX_VALUE, HELP_TEXT_NAME
+)
+from user.validators import UsernameValidator, validate_username
 
 
 class User(AbstractUser):
@@ -23,9 +24,10 @@ class User(AbstractUser):
 
     username = models.CharField(
         max_length=MAX_NAME_FIELD,
-        verbose_name='Имя пользователя',
         unique=True,
-        validators=[validate_username,],
+        verbose_name='Имя пользователя',
+        help_text=(HELP_TEXT_NAME),
+        validators=(UsernameValidator(), validate_username,),
         error_messages={
             'unique': 'Пользователь с таким именем уже существует!',
         },
@@ -33,12 +35,16 @@ class User(AbstractUser):
     first_name = models.CharField(
         max_length=MAX_NAME_FIELD,
         blank=True,
-        verbose_name='Имя'
+        null=True,
+        verbose_name='Имя',
+        help_text='Заполните Имя'
     )
     last_name = models.CharField(
         max_length=MAX_NAME_FIELD,
         blank=True,
-        verbose_name='Фамилия'
+        null=True,
+        verbose_name='Фамилия',
+        help_text='Заполните Фамилию'
     )
     email = models.EmailField(
         max_length=MAX_EMAIL_FIELD,
@@ -73,7 +79,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
+        ordering = ('id', 'username',)
 
     def __str__(self):
         return self.username[:LENGTH_TEXT]
