@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError as VE
 from rest_framework.serializers import (CharField, EmailField,
                                         ModelSerializer, Serializer)
 from rest_framework.validators import UniqueValidator
@@ -56,13 +56,11 @@ class TokenSerializer(Serializer):
         if not user:
             raise NotFound('Пользователь с таким именем не найден.')
         if user.confirmation_code != confirmation_code:
-            raise ValidationError('Неверный код подтверждения.',
-                                  code='invalid_code')
+            raise VE('Неверный код подтверждения.', 'invalid_code')
         return {'user': user}
 
     def get_token(self, user):
-        token = AccessToken.for_user(user)
-        return token
+        return AccessToken.for_user(user)
 
 
 class UserSerializer(ModelSerializer):

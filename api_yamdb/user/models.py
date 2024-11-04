@@ -48,7 +48,6 @@ class User(AbstractUser):
     )
     email = models.EmailField(
         max_length=MAX_EMAIL_FIELD,
-        blank=True,
         unique=True,
         verbose_name='Электронная почта',
         help_text='Введите свой email',
@@ -73,8 +72,16 @@ class User(AbstractUser):
         max_length=MAX_VALUE,
         null=True,
         blank=True,
-        verbose_name="Код потдверждения",
+        verbose_name='Код потдверждения',
     )
+
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN or self.is_superuser or self.is_staff
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
 
     class Meta:
         verbose_name = 'Пользователь'
