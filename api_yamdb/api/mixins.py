@@ -11,6 +11,8 @@ class CategoryGenreMixin(CreateModelMixin,
                          ListModelMixin,
                          GenericViewSet):
     """Миксин для категорий и жанров."""
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("name",)
     permission_classes = (AnonimReadOnly | AdminOnly,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+    lookup_field = 'slug'
+

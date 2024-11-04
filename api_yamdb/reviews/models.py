@@ -80,6 +80,7 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
 class TitleGenre(models.Model):
     '''Класс произведений-жанров.'''
     title = models.ForeignKey(Title, on_delete=models.CASCADE,)

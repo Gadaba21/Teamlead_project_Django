@@ -1,4 +1,3 @@
-
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
@@ -25,6 +24,7 @@ from .permissions import (
     AdminOnly
 )
 
+
 class CategoryViewSet(CategoryGenreMixin):
     """Вьюсет для модели категорий."""
     queryset = Category.objects.all()
@@ -44,6 +44,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_class = TitleFilters
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (AnonimReadOnly | AdminOnly,)
+    http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -58,6 +59,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsSuperUserIsAdminIsModeratorIsAuthor
     )
+    http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -76,6 +78,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsSuperUserIsAdminIsModeratorIsAuthor
     )
+    http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
     def get_review(self):
         return get_object_or_404(Review, pk=self.kwargs.get('review_id'))

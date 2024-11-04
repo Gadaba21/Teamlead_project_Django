@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound, ValidationError as VE
 from rest_framework.serializers import (CharField, EmailField,
                                         ModelSerializer, Serializer)
@@ -8,8 +7,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD
 from user.utils import generate_confirmation_code
 from user.validators import validate_username, UsernameValidator
-
-User = get_user_model()
+from .models import User
 
 
 class SignUpSerializer(ModelSerializer):
