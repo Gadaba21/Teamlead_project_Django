@@ -3,6 +3,7 @@ from rest_framework.mixins import (CreateModelMixin,
                                    DestroyModelMixin,
                                    ListModelMixin)
 from rest_framework.viewsets import GenericViewSet
+from .permissions import AnonimReadOnly, AdminOnly
 
 
 class CategoryGenreMixin(CreateModelMixin,
@@ -12,3 +13,4 @@ class CategoryGenreMixin(CreateModelMixin,
     """Миксин для категорий и жанров."""
     filter_backends = (filters.SearchFilter,)
     search_fields = ("name",)
+    permission_classes = (AnonimReadOnly | AdminOnly,)

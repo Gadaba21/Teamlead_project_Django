@@ -1,8 +1,8 @@
 
 from django.shortcuts import get_object_or_404
-
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from .filters import TitleFilters
 from .mixins import CategoryGenreMixin
 from .serializers import (
@@ -11,16 +11,19 @@ from .serializers import (
     GenreSerializer,
     ReviewSerializer,
     TitleSerializerGet,
-    TitleSerializerPost
+    TitleSerializer
 )
 from reviews.models import (
     Category,
-    Comment,
     Genre,
     Review,
     Title
 )
-
+from .permissions import (
+    AnonimReadOnly,
+    IsSuperUserIsAdminIsModeratorIsAuthor,
+    AdminOnly
+)
 
 class CategoryViewSet(CategoryGenreMixin):
     """Вьюсет для модели категорий."""
@@ -39,16 +42,22 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('review__score')).order_by('name')
     filterset_class = TitleFilters
+    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (AnonimReadOnly | AdminOnly,)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return TitleSerializerGet
-        return TitleSerializerPost
+        return TitleSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели отзывов."""
     serializer_class = ReviewSerializer
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsSuperUserIsAdminIsModeratorIsAuthor
+    )
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -63,6 +72,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели комментариев."""
     serializer_class = CommentSerializer
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsSuperUserIsAdminIsModeratorIsAuthor
+    )
 
     def get_review(self):
         return get_object_or_404(Review, pk=self.kwargs.get('review_id'))
