@@ -2,7 +2,7 @@ import hashlib
 
 from django.core.mail import send_mail
 
-from api.constanst import CONFIRM_CODE_LEN
+from api.constants import CONFIRM_CODE_LEN
 
 
 def generate_confirmation_code(user):

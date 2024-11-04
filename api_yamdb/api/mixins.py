@@ -15,4 +15,3 @@ class CategoryGenreMixin(CreateModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
-

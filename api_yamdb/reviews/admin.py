@@ -1,5 +1,6 @@
 from django.contrib import admin
-from api.constanst import PER_PAGE
+from api.constants import PER_PAGE
+
 from .models import Category, Comment, Title, Review, Genre
 
 
@@ -31,6 +32,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_per_page = PER_PAGE
     search_fields = ('author',)
 
+
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
     list_display = (
@@ -46,6 +48,7 @@ class TitleAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
     search_fields = ('name',)
 
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
@@ -56,6 +59,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_editable = ('slug',)
     list_display_links = ('pk',)
     empty_value_display = '-пусто-'
+
 
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):

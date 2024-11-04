@@ -4,9 +4,9 @@ from rest_framework.serializers import (CharField, EmailField,
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api.constanst import MAX_EMAIL_FIELD, MAX_NAME_FIELD
-from user.utils import generate_confirmation_code
-from user.validators import validate_username, UsernameValidator
+from api.constants import MAX_EMAIL_FIELD, MAX_NAME_FIELD
+from .utils import generate_confirmation_code
+from .validators import validate_username, UsernameValidator
 from .models import User
 
 

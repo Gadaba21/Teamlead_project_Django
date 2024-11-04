@@ -2,7 +2,7 @@ from django.contrib.admin import ModelAdmin, site
 from django.contrib.admin.decorators import register
 from django.contrib.auth.models import Group
 
-from user.models import User
+from .models import User
 
 
 @register(User)

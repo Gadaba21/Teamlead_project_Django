@@ -1,7 +1,9 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from api.constanst import MIN_YEAR, MIN_VALUE, MAX_VALUE
-import re
+
+from api.constants import MIN_YEAR, MIN_VALUE, MAX_VALUE
 
 
 def validate_year(year):
@@ -20,4 +22,5 @@ def validate_slug(value):
 
 def validate_score(value):
     if not (MIN_VALUE <= value <= MAX_VALUE):
-        raise ValidationError(f'Оценка должна быть в диапазоне от {MIN_VALUE} до {MAX_VALUE}.')
+        raise ValidationError(
+            f'Оценка должна быть в диапазоне от {MIN_VALUE} до {MAX_VALUE}.')
