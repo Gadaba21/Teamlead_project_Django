@@ -1,7 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 
-from api.constanst import PER_PAGE
+from api.constants import PER_PAGE
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

@@ -1,6 +1,7 @@
 from django.db import models
+
 from user.models import User
-from api.constanst import (LENGTH_TEXT, MAX_LENGTH, MAX_SLAG)
+from api.constants import LENGTH_TEXT, MAX_LENGTH, MAX_SLAG
 from .validators import validate_year, validate_slug, validate_score
 
 
