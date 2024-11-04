@@ -35,7 +35,7 @@ class Command(BaseCommand):
                         f'Файл: {file_name} загружен успешно')
                     )
             except IntegrityError:
-                pass            
+                pass
             except FileNotFoundError:
                 self.stderr.write(self.style.ERROR(
                     f'файл: {file_name} не найден')
