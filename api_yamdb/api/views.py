@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Avg
 from rest_framework import viewsets, permissions
+from rest_framework.filters import OrderingFilter
 
 from .filters import TitleFilters
 from .viewset import CategoryGenreViewSet
@@ -16,7 +17,6 @@ from .serializers import (
 from reviews.models import (
     Category,
     Genre,
-    Review,
     Title
 )
 from .permissions import (
@@ -43,7 +43,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('review__score')).order_by('name')
     filterset_class = TitleFilters
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     permission_classes = (AnonimReadOnly | AdminOnly,)
     http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
