@@ -137,7 +137,7 @@ class Review(BaseModel):
         return self.text[:LENGTH_TEXT]
 
 
-class Comment(models.Model):
+class Comment(BaseModel):
     """Класс комментариев."""
     review = models.ForeignKey(
         Review,
