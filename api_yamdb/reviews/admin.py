@@ -1,6 +1,6 @@
 from django.contrib import admin
-from api.constants import PER_PAGE
 
+from api.constants import PER_PAGE
 from .models import Category, Comment, Title, Review, Genre
 
 
@@ -40,13 +40,17 @@ class TitleAdmin(admin.ModelAdmin):
         'category',
         'name',
         'year',
-        'description'
+        'description',
+        'genres_list'
     )
     list_display_links = ('name', 'description')
     list_editable = ('category',)
     list_filter = ('genre', 'category')
     empty_value_display = '-пусто-'
     search_fields = ('name',)
+
+    def genres_list(self, obj):
+        return obj.genre.all()
 
 
 @admin.register(Category)
