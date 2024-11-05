@@ -1,3 +1,4 @@
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework.exceptions import NotFound, ValidationError as VE
 from rest_framework.serializers import (CharField, EmailField,
                                         ModelSerializer, Serializer)
@@ -5,7 +6,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.constants import MAX_EMAIL_FIELD, MAX_NAME_FIELD
-from .utils import generate_confirmation_code
+from .utils import generate_confirmation_code, send_confirmation_email
 from .validators import validate_username, UsernameValidator
 from .models import User
 
@@ -38,8 +39,8 @@ class SignUpSerializer(ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        user.confirmation_code = generate_confirmation_code(user)
-        user.save()
+        confirmation_code = generate_confirmation_code(user)
+        send_confirmation_email(user.email, confirmation_code)
         return user
 
 
@@ -53,7 +54,7 @@ class TokenSerializer(Serializer):
         user = User.objects.filter(username=username).first()
         if not user:
             raise NotFound('Пользователь с таким именем не найден.')
-        if user.confirmation_code != confirmation_code:
+        if not default_token_generator.check_token(user, confirmation_code):
             raise VE('Неверный код подтверждения.', 'invalid_code')
         return {'user': user}
 

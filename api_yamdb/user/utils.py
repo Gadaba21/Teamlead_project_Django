@@ -1,13 +1,12 @@
-import hashlib
-
 from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
 
-from api.constants import CONFIRM_CODE_LEN
+from api_yamdb.settings import NOREPLAY_EMAIL
 
 
 def generate_confirmation_code(user):
-    data = f'{user.username}{user.email}'
-    return hashlib.sha256(data.encode()).hexdigest()[:CONFIRM_CODE_LEN]
+    """Генерация кода подтверждения с использованием Django токенов."""
+    return default_token_generator.make_token(user)
 
 
 def send_confirmation_email(email, confirmation_code):
@@ -15,6 +14,6 @@ def send_confirmation_email(email, confirmation_code):
     send_mail(
         subject='Ваш код подтверждения',
         message=f'Ваш код подтверждения: {confirmation_code}',
-        from_email='noreply@example.com',
-        recipient_list=[email]
+        from_email=NOREPLAY_EMAIL,
+        recipient_list=(email,)
     )

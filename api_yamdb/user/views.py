@@ -8,7 +8,6 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 
 from api.permissions import AdminOnly
 from .serializers import SignUpSerializer, TokenSerializer, UserSerializer
-from .utils import send_confirmation_email
 from .models import User
 
 
@@ -26,9 +25,7 @@ class SignUpViewSet(ViewSet):
                        'username': existing_user.username}
             return Response(context, status=HTTP_200_OK)
         serializer.is_valid(raise_exception=True)
-
         user = serializer.save()
-        send_confirmation_email(user.email, user.confirmation_code)
         context = {'email': user.email, 'username': user.username}
         return Response(context, HTTP_200_OK)
 
