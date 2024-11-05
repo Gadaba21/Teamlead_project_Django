@@ -1,7 +1,7 @@
 from rest_framework import permissions
 
 
-class AdminOnly(permissions.BasePermission):
+class AdminOnly(permissions.IsAdminUser):
     """
     Предоставляет права на осуществление запросов
     только суперпользователю Джанго или

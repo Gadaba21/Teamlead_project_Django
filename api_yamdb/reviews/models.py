@@ -7,48 +7,41 @@ from api.constants import (LENGTH_TEXT, MAX_LENGTH, MAX_SLAG,
 from .validators import validate_year, validate_slug
 
 
-class Category(models.Model):
-    '''Класс категорий.'''
+class CommonCategoryGenre(models.Model):
+    """Абстрактная модель для категорий и жанров."""
     name = models.CharField(
-        verbose_name='Категория',
+        verbose_name='Название',
         max_length=MAX_LENGTH
     )
     slug = models.SlugField(
-        verbose_name='Слаг категории',
+        verbose_name='Слаг',
         max_length=MAX_SLAG,
         unique=True,
         validators=(validate_slug,)
     )
 
     class Meta:
+        abstract = True
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
+class Category(CommonCategoryGenre):
+    '''Класс категорий.'''
+
+    class Meta(CommonCategoryGenre.Meta):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
 
 
-class Genre(models.Model):
+class Genre(CommonCategoryGenre):
     '''Класс жанров.'''
-    name = models.CharField(
-        verbose_name='Жанр',
-        max_length=MAX_LENGTH
-    )
-    slug = models.SlugField(
-        verbose_name='Слаг жанра',
-        max_length=MAX_SLAG,
-        unique=True,
-        validators=(validate_slug,)
-    )
 
-    class Meta:
+    class Meta(CommonCategoryGenre.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
 
 
 class Title(models.Model):
@@ -72,7 +65,8 @@ class Title(models.Model):
     )
     year = models.SmallIntegerField(
         validators=(validate_year, ),
-        verbose_name='Год'
+        verbose_name='Год',
+        db_index=True
     )
 
     class Meta:
