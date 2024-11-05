@@ -6,10 +6,10 @@ from rest_framework.viewsets import GenericViewSet
 from .permissions import AnonimReadOnly, AdminOnly
 
 
-class CategoryGenreMixin(CreateModelMixin,
-                         DestroyModelMixin,
-                         ListModelMixin,
-                         GenericViewSet):
+class CategoryGenreViewSet(CreateModelMixin,
+                           DestroyModelMixin,
+                           ListModelMixin,
+                           GenericViewSet):
     """Миксин для категорий и жанров."""
     permission_classes = (AnonimReadOnly | AdminOnly,)
     filter_backends = (filters.SearchFilter,)

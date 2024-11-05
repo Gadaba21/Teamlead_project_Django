@@ -3,20 +3,23 @@ from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    """Сериализатор категорий."""
+class BaseSerializer(serializers.ModelSerializer):
 
     class Meta:
+        abstract = True
+        fields = ('name', 'slug')
+
+
+class CategorySerializer(BaseSerializer):
+
+    class Meta(BaseSerializer.Meta):
         model = Category
-        fields = ('name', 'slug')
 
 
-class GenreSerializer(serializers.ModelSerializer):
-    """Сериализатор жанров."""
+class GenreSerializer(BaseSerializer):
 
-    class Meta:
+    class Meta(BaseSerializer.Meta):
         model = Genre
-        fields = ('name', 'slug')
 
 
 class TitleSerializerGet(serializers.ModelSerializer):
@@ -36,7 +39,8 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genre.objects.all(),
-        many=True
+        many=True,
+        required=True
     )
     category = serializers.SlugRelatedField(
         slug_field='slug',
@@ -47,6 +51,11 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
+
+    def to_representation(self, title):
+        """Определяет какой сериализатор будет использоваться для чтения."""
+        serializer = TitleSerializerGet(title)
+        return serializer.data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -59,7 +68,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """Запрещает пользователям оставлять повторные отзывы."""
-        if not self.context.get('request').method == 'POST':
+        if self.context.get('request').method != 'POST':
             return data
         author = self.context.get('request').user
         title_id = self.context.get('view').kwargs.get('title_id')

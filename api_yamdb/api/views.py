@@ -4,7 +4,7 @@ from django.db.models import Avg
 from rest_framework import viewsets, permissions
 
 from .filters import TitleFilters
-from .mixins import CategoryGenreMixin
+from .viewset import CategoryGenreViewSet
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -26,13 +26,13 @@ from .permissions import (
 )
 
 
-class CategoryViewSet(CategoryGenreMixin):
+class CategoryViewSet(CategoryGenreViewSet):
     """Вьюсет для модели категорий."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
-class GenreViewSet(CategoryGenreMixin):
+class GenreViewSet(CategoryGenreViewSet):
     """Вьюсет для модели жанров."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -81,8 +81,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     )
     http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
+    def get_title(self):
+        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+
     def get_review(self):
-        return get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        return get_object_or_404(self.get_title().review,
+                                 pk=self.kwargs.get('review_id'))
 
     def get_queryset(self):
         return self.get_review().comments.all()
