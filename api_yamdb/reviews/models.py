@@ -125,7 +125,7 @@ class Review(BaseModel):
         verbose_name='Произведение'
     )
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         constraints = [
@@ -146,7 +146,7 @@ class Comment(BaseModel):
         verbose_name='отзыв'
     )
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 
