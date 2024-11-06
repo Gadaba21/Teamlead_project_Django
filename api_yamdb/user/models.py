@@ -13,20 +13,16 @@ class User(AbstractUser):
     добавлены поля биография и роль пользователя.
     """
 
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    ROLES = (
-        (USER, 'Пользователь'),
-        (ADMIN, 'Администратор'),
-        (MODERATOR, 'Модератор')
-    )
+    class Role(models.TextChoices):
+        USER = 'user', 'Пользователь'
+        MODERATOR = 'moderator', 'Модератор'
+        ADMIN = 'admin', 'Администратор'
 
     username = models.CharField(
         max_length=MAX_NAME_FIELD,
         unique=True,
         verbose_name='Имя пользователя',
-        help_text=(HELP_TEXT_NAME),
+        help_text=HELP_TEXT_NAME,
         validators=(UsernameValidator(), validate_username,),
         error_messages={
             'unique': 'Пользователь с таким именем уже существует!',
@@ -62,9 +58,9 @@ class User(AbstractUser):
         help_text='Заполните информацию о себе'
     )
     role = models.CharField(
-        max_length=LENGTH_TEXT,
-        choices=ROLES,
-        default=USER,
+        max_length=max(len(role) for role, _ in Role.choices),
+        choices=Role.choices,
+        default=Role.USER,
         verbose_name='Роль пользователя',
         help_text='Уровень доступа пользователя'
     )
@@ -77,11 +73,15 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser or self.is_staff
+        return (
+            self.role == self.Role.ADMIN
+            or self.is_superuser
+            or self.is_staff
+        )
 
     @property
     def is_moderator(self):
-        return self.role == self.MODERATOR
+        return self.role == self.Role.MODERATOR
 
     class Meta:
         verbose_name = 'Пользователь'
