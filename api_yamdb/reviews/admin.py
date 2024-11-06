@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from api.constants import PER_PAGE
-from .models import Category, Comment, Title, Review, Genre
+from .models import Category, Comment, Genre, Review, Title, TitleGenre
 
 
 @admin.register(Review)
@@ -50,7 +50,7 @@ class TitleAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     def genres_list(self, obj):
-        return obj.genre.all()
+        return ', '.join([genre.name for genre in obj.genre.all()])
 
 
 @admin.register(Category)
@@ -75,3 +75,12 @@ class GenreAdmin(admin.ModelAdmin):
     list_editable = ('slug',)
     list_display_links = ('pk',)
     empty_value_display = '-пусто-'
+
+
+@admin.register(TitleGenre)
+class TitleGenreAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'title',
+        'genre'
+    )

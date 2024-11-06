@@ -29,7 +29,7 @@ class CommonCategoryGenre(models.Model):
 
 
 class Category(CommonCategoryGenre):
-    '''Класс категорий.'''
+    """Класс категорий."""
 
     class Meta(CommonCategoryGenre.Meta):
         verbose_name = 'Категория'
@@ -37,7 +37,7 @@ class Category(CommonCategoryGenre):
 
 
 class Genre(CommonCategoryGenre):
-    '''Класс жанров.'''
+    """Класс жанров."""
 
     class Meta(CommonCategoryGenre.Meta):
         verbose_name = 'Жанр'
@@ -45,7 +45,7 @@ class Genre(CommonCategoryGenre):
 
 
 class Title(models.Model):
-    '''Класс произведений.'''
+    """Класс произведений."""
     name = models.TextField(
         verbose_name='Название',
         max_length=MAX_LENGTH
@@ -60,6 +60,7 @@ class Title(models.Model):
     description = models.TextField(verbose_name='Описание')
     genre = models.ManyToManyField(
         Genre,
+        through='TitleGenre',
         related_name='titles',
         verbose_name='Жанр',
     )
@@ -79,9 +80,22 @@ class Title(models.Model):
 
 
 class TitleGenre(models.Model):
-    '''Класс произведений-жанров.'''
-    title = models.ForeignKey(Title, on_delete=models.CASCADE,)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE,)
+    """Класс произведений-жанров."""
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        verbose_name='Жанр'
+    )
+
+    class Meta:
+        verbose_name = 'Жанр произвдения'
+        verbose_name_plural = 'Жанры произведений'
+        ordering = ('title',)
 
     def __str__(self) -> str:
         return f'{self.title},{self.genre}'
