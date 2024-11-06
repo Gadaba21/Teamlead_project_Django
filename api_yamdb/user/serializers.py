@@ -2,9 +2,9 @@ from django.contrib.auth.tokens import default_token_generator
 from rest_framework.exceptions import NotFound, ValidationError as VE
 from rest_framework.serializers import (CharField, EmailField,
                                         ModelSerializer, Serializer)
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, ValidationError
 from rest_framework_simplejwt.tokens import AccessToken
-
+from django.core.exceptions import ObjectDoesNotExist
 from api.constants import MAX_EMAIL_FIELD, MAX_NAME_FIELD
 from .utils import generate_confirmation_code, send_confirmation_email
 from .validators import validate_username, UsernameValidator
@@ -38,9 +38,24 @@ class SignUpSerializer(ModelSerializer):
         fields = ('username', 'email')
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        confirmation_code = generate_confirmation_code(user)
-        send_confirmation_email(user.email, confirmation_code)
+        try:
+            user, created = User.objects.get_or_create(
+                username=validated_data['username'],
+                defaults={'email': validated_data['email']}
+            )
+            if not created:
+                raise ValidationError({
+                    'username':
+                    'Пользователь с таким именем уже существует'})
+            if user.email != validated_data['email']:
+                raise ValidationError({
+                    'email':
+                    'Пользователь с таким email уже существует'})
+        except ObjectDoesNotExist:
+            user = User.objects.create_user(**validated_data)
+            user.confirmation_code = generate_confirmation_code(user)
+            user.save()
+        send_confirmation_email(user.email, user.confirmation_code)
         return user
 
 
