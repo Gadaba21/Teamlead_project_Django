@@ -49,6 +49,7 @@ class TitleAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
     search_fields = ('name',)
 
+    @admin.display(description="Жанры")
     def genres_list(self, obj):
         return obj.genre.all()
 
