@@ -16,14 +16,6 @@ class SignUpViewSet(ViewSet):
 
     def create(self, request):
         serializer = SignUpSerializer(data=request.data)
-        if (User.objects.filter(email=request.data.get(
-            'email')).exists() and User.objects.filter(
-                username=request.data.get('username')).exists()):
-            existing_user = User.objects.get(username=request.data.get(
-                'username'))
-            context = {'email': existing_user.email,
-                       'username': existing_user.username}
-            return Response(context, status=HTTP_200_OK)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         context = {'email': user.email, 'username': user.username}
@@ -36,7 +28,7 @@ class TokenView(APIView):
     def post(self, request):
         serializer = TokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data('user')
+        user = serializer.validated_data['user']
         token = serializer.get_token(user)
         return Response({'token': str(token)}, HTTP_200_OK)
 
