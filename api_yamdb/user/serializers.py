@@ -33,7 +33,7 @@ class SignUpSerializer(ModelSerializer):
             if not created and user.email != valid_data['email']:
                 raise VE(FORBIDDEN_EMAIL)
         except Exception as e:
-            raise VE({'field_name': f'Ошибка создания пользователя: {str(e)}'})
+            raise VE(f'{e}')
         send_confirmation_email(user.email, dtg.make_token(user))
         return user
 

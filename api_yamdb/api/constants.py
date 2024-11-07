@@ -14,4 +14,4 @@ RESOLVED_CHARS = (
 )
 FORBIDDEN_NAME = 'Имя пользователя \'me\' использовать нельзя!'
 HELP_TEXT_NAME = RESOLVED_CHARS + FORBIDDEN_NAME
-FORBIDDEN_EMAIL = 'Пользователь с таким email уже существует.'
+FORBIDDEN_EMAIL = {'field_name': ['Пользователь с таким email уже существует!']}

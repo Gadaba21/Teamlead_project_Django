@@ -34,14 +34,16 @@ class User(AbstractUser):
         blank=True,
         null=True,
         verbose_name='Имя',
-        help_text='Заполните Имя'
+        help_text='Заполните Имя',
+        default='Пусто'
     )
     last_name = models.CharField(
         max_length=MAX_NAME_FIELD,
         blank=True,
         null=True,
         verbose_name='Фамилия',
-        help_text='Заполните Фамилию'
+        help_text='Заполните Фамилию',
+        default='Пусто'
     )
     email = models.EmailField(
         max_length=MAX_EMAIL_FIELD,
@@ -56,7 +58,8 @@ class User(AbstractUser):
         blank=True,
         null=True,
         verbose_name='Биография',
-        help_text='Заполните информацию о себе'
+        help_text='Заполните информацию о себе',
+        default='Пусто'
     )
     role = models.CharField(
         max_length=max(len(role) for role, _ in Role.choices),
