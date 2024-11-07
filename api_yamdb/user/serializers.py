@@ -24,7 +24,8 @@ class SignUpSerializer(ModelSerializer):
     def create(self, valid_data):
         user_by_email = User.objects.filter(email=valid_data['email']).first()
         if user_by_email and user_by_email.username != valid_data['username']:
-            raise VE(FORBIDDEN_EMAIL)
+            raise VE({"username": ["Это поле обязательно."],
+                      "email": ["Пользователь с таким email уже существует."]})
         try:
             user, created = User.objects.get_or_create(
                 username=valid_data['username'],
@@ -32,8 +33,8 @@ class SignUpSerializer(ModelSerializer):
             )
             if not created and user.email != valid_data['email']:
                 raise VE(FORBIDDEN_EMAIL)
-        except Exception as e:
-            raise VE(f'{e}')
+        except Exception:
+            raise VE({"username": ["Это поле обязательно."]})
         send_confirmation_email(user.email, dtg.make_token(user))
         return user
 
