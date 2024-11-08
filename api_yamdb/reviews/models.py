@@ -56,7 +56,6 @@ class Title(models.Model):
         related_name='titles',
         verbose_name='Категория',
         blank=True, null=True,
-        default='no_category'
     )
     description = models.TextField(
         verbose_name='Описание',

@@ -52,6 +52,12 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year',
                   'description', 'genre', 'category')
 
+    def validate_genre(self, value):
+        """Проверка, что поле genre не пустое."""
+        if not value:  # Проверка на пустоту
+            raise serializers.ValidationError("Поле 'genre' обязательно для заполнения.")
+        return value
+
     def to_representation(self, title):
         """Определяет какой сериализатор будет использоваться для чтения."""
         serializer = TitleSerializerGet(title)
