@@ -14,4 +14,7 @@ RESOLVED_CHARS = (
 )
 FORBIDDEN_NAME = 'Имя пользователя \'me\' использовать нельзя!'
 HELP_TEXT_NAME = RESOLVED_CHARS + FORBIDDEN_NAME
-FORBIDDEN_EMAIL = {"email": ["Пользователь с таким email уже существует."]}
+UNIQUE_FIELDS = (
+    ['Пользователь с таким email уже существует.'],
+    ['Пользователь с таким username уже существует.']
+)
