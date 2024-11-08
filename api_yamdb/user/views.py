@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
@@ -16,7 +16,8 @@ class SignUpViewSet(ViewSet):
 
     def create(self, request):
         serializer = SignUpSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, HTTP_400_BAD_REQUEST)
         user = serializer.save()
         context = {'email': user.email, 'username': user.username}
         return Response(context, HTTP_200_OK)

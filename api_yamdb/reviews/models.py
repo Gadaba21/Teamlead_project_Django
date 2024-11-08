@@ -56,11 +56,13 @@ class Title(models.Model):
         related_name='titles',
         verbose_name='Категория',
         blank=True, null=True,
-        default=Category.objects.get_or_create(name="Без категории")[0].pk
+        default='no_category'
     )
-    description = models.TextField(verbose_name='Описание',
-                                   null=True,
-                                   default='Пусто')
+    description = models.TextField(
+        verbose_name='Описание',
+        null=True,
+        default='Пусто'
+    )
     genre = models.ManyToManyField(
         Genre,
         through='TitleGenre',
