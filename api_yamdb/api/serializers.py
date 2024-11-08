@@ -54,8 +54,9 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def validate_genre(self, value):
         """Проверка, что поле genre не пустое."""
-        if not value:  # Проверка на пустоту
-            raise serializers.ValidationError("Поле 'genre' обязательно для заполнения.")
+        if not value:
+            raise serializers.ValidationError(
+                "Поле 'genre' обязательно для заполнения.")
         return value
 
     def to_representation(self, title):
