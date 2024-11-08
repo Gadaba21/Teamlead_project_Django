@@ -28,10 +28,10 @@ class SignUpSerializer(ModelSerializer):
         errors = {}
 
         if username and username.email != valid_data['email']:
-            errors['username'] = UNIQUE_FIELDS[1]
+            errors['username'] = [UNIQUE_FIELDS[1]]
 
         if user_by_email and user_by_email.username != valid_data['username']:
-            errors['email'] = UNIQUE_FIELDS[0]
+            errors['email'] = [UNIQUE_FIELDS[0]]
 
         if errors:
             raise VE(errors)

@@ -3,7 +3,7 @@ from django.db import models
 
 from api.constants import (
     MAX_EMAIL_FIELD, MAX_NAME_FIELD,
-    LENGTH_TEXT, HELP_TEXT_NAME
+    LENGTH_TEXT, HELP_TEXT_NAME, UNIQUE_FIELDS
 )
 from .validators import UsernameValidator, validate_username
 
@@ -26,7 +26,7 @@ class User(AbstractUser):
         help_text=HELP_TEXT_NAME,
         validators=(UsernameValidator(), validate_username,),
         error_messages={
-            'unique': 'Пользователь с таким именем уже существует!',
+            'unique': UNIQUE_FIELDS[1],
         },
     )
     first_name = models.CharField(
@@ -51,7 +51,7 @@ class User(AbstractUser):
         verbose_name='Электронная почта',
         help_text='Введите свой email',
         error_messages={
-            'unique': 'Пользователь с таким email уже существует!',
+            'unique': UNIQUE_FIELDS[0],
         },
     )
     bio = models.TextField(
