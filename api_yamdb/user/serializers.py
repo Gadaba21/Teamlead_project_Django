@@ -3,6 +3,7 @@ from rest_framework.exceptions import NotFound, ValidationError as VE
 from rest_framework.serializers import (CharField, EmailField,
                                         ModelSerializer, Serializer)
 from rest_framework_simplejwt.tokens import AccessToken
+from django.db import IntegrityError
 
 from api.constants import MAX_EMAIL_FIELD, MAX_NAME_FIELD, UNIQUE_FIELDS
 from .utils import send_confirmation_email
@@ -21,25 +22,24 @@ class SignUpSerializer(ModelSerializer):
         model = User
         fields = ('username', 'email')
 
-    def create(self, valid_data):
+    def create(self, validated_data):
+        try:
+            user, _ = User.objects.get_or_create(
+                username=validated_data['username'],
+                email=validated_data['email'],
+            )
+        except IntegrityError as e:
+            error_message = str(e)
+            if 'username' in error_message:
+                raise VE({'username': [UNIQUE_FIELDS[1]]})
+            else:
+                if User.objects.filter(
+                        username=validated_data['username']).exists():
+                    raise VE({'username': [UNIQUE_FIELDS[1]],
+                              'email': [UNIQUE_FIELDS[0]]})
+                else:
+                    raise VE({'email': [UNIQUE_FIELDS[0]]})
 
-        user_by_email = User.objects.filter(email=valid_data['email']).first()
-        username = User.objects.filter(username=valid_data['username']).first()
-        errors = {}
-
-        if username and username.email != valid_data['email']:
-            errors['username'] = [UNIQUE_FIELDS[1]]
-
-        if user_by_email and user_by_email.username != valid_data['username']:
-            errors['email'] = [UNIQUE_FIELDS[0]]
-
-        if errors:
-            raise VE(errors)
-
-        user, created = User.objects.get_or_create(
-            username=valid_data['username'],
-            defaults={'email': valid_data['email']}
-        )
         send_confirmation_email(user.email, dtg.make_token(user))
         return user
 
