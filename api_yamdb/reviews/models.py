@@ -7,8 +7,8 @@ from api.constants import (LENGTH_TEXT, MAX_LENGTH, MAX_SLAG,
 from .validators import validate_year, validate_slug
 
 
-class CommonCategoryGenre(models.Model):
-    """Абстрактная модель для категорий и жанров."""
+class NamingSlugModel(models.Model):
+    """Абстрактная модель для сущностей с названием и слугом."""
     name = models.CharField(
         verbose_name='Название',
         max_length=MAX_LENGTH
@@ -28,18 +28,18 @@ class CommonCategoryGenre(models.Model):
         return self.name
 
 
-class Category(CommonCategoryGenre):
+class Category(NamingSlugModel):
     """Класс категорий."""
 
-    class Meta(CommonCategoryGenre.Meta):
+    class Meta(NamingSlugModel.Meta):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
 
-class Genre(CommonCategoryGenre):
+class Genre(NamingSlugModel):
     """Класс жанров."""
 
-    class Meta(CommonCategoryGenre.Meta):
+    class Meta(NamingSlugModel.Meta):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -105,7 +105,7 @@ class TitleGenre(models.Model):
         return f'{self.title},{self.genre}'
 
 
-class BaseModel(models.Model):
+class TextAuthorDateModel(models.Model):
     """Базовая абстрактная модель для контента"""
 
     text = models.TextField(verbose_name='текст')
@@ -124,7 +124,7 @@ class BaseModel(models.Model):
         ordering = ('-pub_date',)
 
 
-class Review(BaseModel):
+class Review(TextAuthorDateModel):
     """Класс отзывов."""
     score = models.SmallIntegerField(
         verbose_name='Оценка',
@@ -137,7 +137,7 @@ class Review(BaseModel):
         verbose_name='Произведение'
     )
 
-    class Meta(BaseModel.Meta):
+    class Meta(TextAuthorDateModel.Meta):
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
         constraints = [
@@ -149,7 +149,7 @@ class Review(BaseModel):
         return self.text[:LENGTH_TEXT]
 
 
-class Comment(BaseModel):
+class Comment(TextAuthorDateModel):
     """Класс комментариев."""
     review = models.ForeignKey(
         Review,
@@ -158,7 +158,7 @@ class Comment(BaseModel):
         verbose_name='отзыв'
     )
 
-    class Meta(BaseModel.Meta):
+    class Meta(TextAuthorDateModel.Meta):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
 

@@ -6,7 +6,6 @@ from reviews.models import Category, Comment, Genre, Review, Title
 class BaseSerializer(serializers.ModelSerializer):
 
     class Meta:
-        abstract = True
         fields = ('name', 'slug')
 
 

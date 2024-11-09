@@ -17,7 +17,8 @@ from .serializers import (
 from reviews.models import (
     Category,
     Genre,
-    Title
+    Title,
+    Review
 )
 from .permissions import (
     AnonimReadOnly,
@@ -81,11 +82,8 @@ class CommentViewSet(viewsets.ModelViewSet):
     )
     http_method_names = ['get', 'post', 'head', 'options', 'patch', 'delete']
 
-    def get_title(self):
-        return get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-
     def get_review(self):
-        return get_object_or_404(self.get_title().review,
+        return get_object_or_404(Review, title__id=self.kwargs.get('title_id'),
                                  pk=self.kwargs.get('review_id'))
 
     def get_queryset(self):
